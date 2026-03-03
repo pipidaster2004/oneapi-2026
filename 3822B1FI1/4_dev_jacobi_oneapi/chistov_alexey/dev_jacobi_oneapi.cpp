@@ -2,68 +2,93 @@
 #include <cmath>
 #include <algorithm>
 
-std::vector<float> JacobiAccONEAPI(const std::vector<float> a,
-                                   const std::vector<float> b,
-                                   float accuracy,
-                                   sycl::device device) {
-  const int size = b.size();
-  int iteration = 0;
-  float current_error = 0.0f;
-  
-  std::vector<float> result(size, 0.0f);
-  sycl::queue queue(device);
+std::vector<float> JacobiDevONEAPI(
+        const std::vector<float>& a,
+        const std::vector<float>& b,
+        float accuracy,
+        sycl::device device) {
 
-  float *device_matrix = sycl::malloc_device<float>(a.size(), queue);
-  float *device_vector = sycl::malloc_device<float>(b.size(), queue);
-  float *device_current = sycl::malloc_device<float>(size, queue);
-  float *device_previous = sycl::malloc_device<float>(size, queue);
-  float *device_error = sycl::malloc_device<float>(1, queue);
+    const int n = static_cast<int>(b.size());
+    const float accuracy_sq = accuracy * accuracy;
 
-  queue.memcpy(device_matrix, a.data(), a.size() * sizeof(float)).wait();
-  queue.memcpy(device_vector, b.data(), b.size() * sizeof(float)).wait();
-  queue.memset(device_current, 0, sizeof(float) * size);
-  queue.memset(device_previous, 0, sizeof(float) * size);
-  queue.memset(device_error, 0, sizeof(float));
+    sycl::queue queue(device, sycl::property::queue::in_order{});
 
-  while (iteration++ < ITERATIONS) {
-    auto reduction = sycl::reduction(device_error, sycl::maximum<>());
+    std::vector<float> inv_diag(n);
+    for (int i = 0; i < n; ++i) {
+        inv_diag[i] = 1.0f / a[i * n + i];
+    }
 
-    queue.parallel_for(sycl::range<1>(size), reduction,
-                       [=](sycl::id<1> idx, auto &error) {
-                         const int row = idx.get(0);
-                         
-                         float new_value = device_vector[row];
-                         for (int col = 0; col < size; col++) {
-                           if (row != col) {
-                             new_value -= device_matrix[row * size + col] * 
-                                         device_previous[col];
-                           }
-                         }
-                         new_value /= device_matrix[row * size + row];
-                         device_current[row] = new_value;
+    float* d_A = sycl::malloc_device<float>(n * n, queue);
+    float* d_B = sycl::malloc_device<float>(n, queue);
+    float* d_invD = sycl::malloc_device<float>(n, queue);
+    float* d_x = sycl::malloc_device<float>(n, queue);
+    float* d_x_new = sycl::malloc_device<float>(n, queue);
 
-                         float difference = sycl::fabs(new_value - 
-                                                      device_previous[row]);
-                         error.combine(difference);
-                       });
+    queue.memcpy(d_A, a.data(), sizeof(float) * n * n);
+    queue.memcpy(d_B, b.data(), sizeof(float) * n);
+    queue.memcpy(d_invD, inv_diag.data(), sizeof(float) * n);
+    queue.fill(d_x, 0.0f, n).wait();
 
-    queue.wait();
+    const size_t wg_size = 64;
+    const size_t global_size =
+        ((n + wg_size - 1) / wg_size) * wg_size;
 
-    queue.memcpy(&current_error, device_error, sizeof(float)).wait();
-    if (current_error < accuracy)
-      break;
-      
-    queue.memset(device_error, 0, sizeof(float)).wait();
-    queue.memcpy(device_previous, device_current, size * sizeof(float)).wait();
-  }
+    const int CHECK_INTERVAL = 8;
 
-  queue.memcpy(result.data(), device_current, size * sizeof(float)).wait();
+    std::vector<float> x_host(n);
 
-  sycl::free(device_matrix, queue);
-  sycl::free(device_vector, queue);
-  sycl::free(device_current, queue);
-  sycl::free(device_previous, queue);
-  sycl::free(device_error, queue);
+    for (int iter = 0; iter < ITERATIONS; ++iter) {
+        queue.parallel_for(
+            sycl::nd_range<1>(global_size, wg_size),
+            [=](sycl::nd_item<1> item) {
 
-  return result; //
+                size_t i = item.get_global_id(0);
+                if (i >= static_cast<size_t>(n)) return;
+
+                const size_t row = i * n;
+                float sum = 0.0f;
+
+                #pragma unroll 4
+                for (int j = 0; j < n; ++j) {
+                    if (j != static_cast<int>(i)) {
+                        sum += d_A[row + j] * d_x[j];
+                    }
+                }
+
+                d_x_new[i] = d_invD[i] * (d_B[i] - sum);
+            });
+
+        queue.wait();
+
+        if ((iter + 1) % CHECK_INTERVAL == 0) {
+
+            queue.memcpy(x_host.data(), d_x_new,
+                         sizeof(float) * n).wait();
+
+            float norm_sq = 0.0f;
+
+            for (int i = 0; i < n; ++i) {
+                float diff = x_host[i];
+                norm_sq += diff * diff;
+            }
+
+            if (norm_sq < accuracy_sq) {
+                std::swap(d_x, d_x_new);
+                break;
+            }
+        }
+
+        std::swap(d_x, d_x_new);
+    }
+
+    queue.memcpy(x_host.data(), d_x,
+                 sizeof(float) * n).wait();
+
+    sycl::free(d_A, queue);
+    sycl::free(d_B, queue);
+    sycl::free(d_invD, queue);
+    sycl::free(d_x, queue);
+    sycl::free(d_x_new, queue);
+
+    return x_host;
 }
