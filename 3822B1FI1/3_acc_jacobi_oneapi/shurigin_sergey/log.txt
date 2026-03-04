@@ -1,0 +1,120 @@
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:22:38: warning: parentheses were disambiguated as a function declaration [-Wvexing-parse]
+   22 |     sycl::buffer<float, 1> x_curr_buf(sycl::range<1>(n));
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:22:39: note: add a pair of parentheses to declare a variable
+   22 |     sycl::buffer<float, 1> x_curr_buf(sycl::range<1>(n));
+      |                                       ^                
+      |                                       (                )
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:23:38: warning: parentheses were disambiguated as a function declaration [-Wvexing-parse]
+   23 |     sycl::buffer<float, 1> x_next_buf(sycl::range<1>(n));
+      |                                      ^~~~~~~~~~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:23:39: note: add a pair of parentheses to declare a variable
+   23 |     sycl::buffer<float, 1> x_next_buf(sycl::range<1>(n));
+      |                                       ^                
+      |                                       (                )
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:27:32: error: member reference base type 'sycl::buffer<float, 1> (sycl::range<1>)' is not a structure or union
+   27 |         auto x_acc = x_curr_buf.get_access<sycl::access::mode::write>(cgh);
+      |                      ~~~~~~~~~~^~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:36:41: error: member reference base type 'sycl::buffer<float, 1> (sycl::range<1>)' is not a structure or union
+   36 |             auto x_curr_acc = x_curr_buf.get_access<sycl::access::mode::read>(cgh);
+      |                               ~~~~~~~~~~^~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:37:41: error: member reference base type 'sycl::buffer<float, 1> (sycl::range<1>)' is not a structure or union
+   37 |             auto x_next_acc = x_next_buf.get_access<sycl::access::mode::write>(cgh);
+      |                               ~~~~~~~~~~^~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:50:41: error: member reference base type 'sycl::buffer<float, 1> (sycl::range<1>)' is not a structure or union
+   50 |             auto x_curr_acc = x_curr_buf.get_access<sycl::access::mode::read>(cgh);
+      |                               ~~~~~~~~~~^~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:51:41: error: member reference base type 'sycl::buffer<float, 1> (sycl::range<1>)' is not a structure or union
+   51 |             auto x_next_acc = x_next_buf.get_access<sycl::access::mode::read>(cgh);
+      |                               ~~~~~~~~~~^~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:70:9: error: no matching function for call to 'swap'
+   70 |         std::swap(x_curr_buf, x_next_buf);
+      |         ^~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_bvector.h:118:3: note: candidate function not viable: no known conversion from 'sycl::buffer<float, 1> (sycl::range<1>)' to '_Bit_reference' for 1st argument
+  118 |   swap(_Bit_reference __x, _Bit_reference __y) noexcept
+      |   ^    ~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_bvector.h:126:3: note: candidate function not viable: no known conversion from 'sycl::buffer<float, 1> (sycl::range<1>)' to '_Bit_reference' for 1st argument
+  126 |   swap(_Bit_reference __x, bool& __y) noexcept
+      |   ^    ~~~~~~~~~~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_bvector.h:134:3: note: candidate function not viable: no known conversion from 'sycl::buffer<float, 1> (sycl::range<1>)' to 'bool &' for 1st argument
+  134 |   swap(bool& __x, _Bit_reference __y) noexcept
+      |   ^    ~~~~~~~~~
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:196:5: note: candidate template ignored: requirement '__and_<std::__not_<std::__is_tuple_like<sycl::buffer<float, 1, sycl::detail::aligned_allocator<float>, void> (sycl::range<1>)>>, std::is_move_constructible<sycl::buffer<float, 1, sycl::detail::aligned_allocator<float>, void> (sycl::range<1>)>, std::is_move_assignable<sycl::buffer<float, 1, sycl::detail::aligned_allocator<float>, void> (sycl::range<1>)>>::value' was not satisfied [with _Tp = sycl::buffer<float, 1> (sycl::range<1>)]
+  196 |     swap(_Tp& __a, _Tp& __b)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/move.h:220:5: note: candidate template ignored: could not match '_Tp[_Nm]' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  220 |     swap(_Tp (&__a)[_Nm], _Tp (&__b)[_Nm])
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_pair.h:533:5: note: candidate template ignored: could not match 'pair<_T1, _T2>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  533 |     swap(pair<_T1, _T2>& __x, pair<_T1, _T2>& __y)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_pair.h:541:5: note: candidate template ignored: could not match 'pair<_T1, _T2>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  541 |     swap(pair<_T1, _T2>&, pair<_T1, _T2>&) = delete;
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_vector.h:1962:5: note: candidate template ignored: could not match 'vector<_Tp, _Alloc>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1962 |     swap(vector<_Tp, _Alloc>& __x, vector<_Tp, _Alloc>& __y)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/array:348:5: note: candidate template ignored: could not match 'array<_Tp, _Nm>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  348 |     swap(array<_Tp, _Nm>& __one, array<_Tp, _Nm>& __two)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/array:356:5: note: candidate template ignored: could not match 'array<_Tp, _Nm>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  356 |     swap(array<_Tp, _Nm>&, array<_Tp, _Nm>&) = delete;
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/tuple:1760:5: note: candidate template ignored: could not match 'tuple<_Elements...>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1760 |     swap(tuple<_Elements...>& __x, tuple<_Elements...>& __y)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/tuple:1768:5: note: candidate template ignored: could not match 'tuple<_Elements...>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1768 |     swap(tuple<_Elements...>&, tuple<_Elements...>&) = delete;
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:738:5: note: candidate template ignored: could not match 'unique_ptr<_Tp, _Dp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  738 |     swap(unique_ptr<_Tp, _Dp>& __x,
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:745:5: note: candidate template ignored: could not match 'unique_ptr<_Tp, _Dp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  745 |     swap(unique_ptr<_Tp, _Dp>&,
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1534:5: note: candidate template ignored: could not match '__shared_ptr<_Tp, _Lp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1534 |     swap(__shared_ptr<_Tp, _Lp>& __a, __shared_ptr<_Tp, _Lp>& __b) noexcept
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1740:5: note: candidate template ignored: could not match '__weak_ptr<_Tp, _Lp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1740 |     swap(__weak_ptr<_Tp, _Lp>& __a, __weak_ptr<_Tp, _Lp>& __b) noexcept
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:574:5: note: candidate template ignored: could not match 'shared_ptr<_Tp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  574 |     swap(shared_ptr<_Tp>& __a, shared_ptr<_Tp>& __b) noexcept
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:763:5: note: candidate template ignored: could not match 'weak_ptr<_Tp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  763 |     swap(weak_ptr<_Tp>& __a, weak_ptr<_Tp>& __b) noexcept
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6493:5: note: candidate template ignored: could not match 'basic_string<_CharT, _Traits, _Alloc>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 6493 |     swap(basic_string<_CharT, _Traits, _Alloc>& __lhs,
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/std_function.h:758:5: note: candidate template ignored: could not match 'function<_Res (_Args...)>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  758 |     swap(function<_Res(_Args...)>& __x, function<_Res(_Args...)>& __y) noexcept
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unordered_map.h:2120:5: note: candidate template ignored: could not match 'unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 2120 |     swap(unordered_map<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unordered_map.h:2127:5: note: candidate template ignored: could not match 'unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 2127 |     swap(unordered_multimap<_Key, _Tp, _Hash, _Pred, _Alloc>& __x,
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/optional:1264:5: note: candidate template ignored: could not match 'optional<_Tp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1264 |     swap(optional<_Tp>& __lhs, optional<_Tp>& __rhs)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/optional:1270:5: note: candidate template ignored: could not match 'optional<_Tp>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1270 |     swap(optional<_Tp>&, optional<_Tp>&) = delete;
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/variant:1285:5: note: candidate template ignored: could not match 'variant<_Types...>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1285 |     swap(variant<_Types...>& __lhs, variant<_Types...>& __rhs)
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/variant:1292:5: note: candidate template ignored: could not match 'variant<_Types...>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+ 1292 |     swap(variant<_Types...>&, variant<_Types...>&) = delete;
+      |     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_lock.h:236:5: note: candidate template ignored: could not match 'unique_lock<_Mutex>' against 'sycl::buffer<float, 1> (sycl::range<1>)'
+  236 |     swap(unique_lock<_Mutex>& __x, unique_lock<_Mutex>& __y) noexcept
+      |     ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:79:22: error: member reference base type 'sycl::buffer<float, 1> (sycl::range<1>)' is not a structure or union
+   79 |     q.copy(x_curr_buf.get_access<sycl::access::mode::read>(), result.data()).wait();
+      |            ~~~~~~~~~~^~~~~~~~~~~
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI1/3_acc_jacobi_oneapi/shurigin_sergey/acc_jacobi_oneapi.cpp:79:60: error: expected expression
+   79 |     q.copy(x_curr_buf.get_access<sycl::access::mode::read>(), result.data()).wait();
+      |                                                            ^
+2 warnings and 8 errors generated.
