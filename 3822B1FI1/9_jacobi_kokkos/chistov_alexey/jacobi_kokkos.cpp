@@ -18,9 +18,8 @@ std::vector<float> JacobiKokkos(const std::vector<float>& a,const std::vector<fl
 
     for (int i = 0; i < n; ++i) {
         h_b(i) = b[i];
-        for (int j = 0; j < n; ++j) {
+        for (int j = 0; j < n; ++j)
             h_a(i, j) = a[i * n + j];
-        }
     }
 
     Kokkos::deep_copy(d_a, h_a);
@@ -33,9 +32,13 @@ std::vector<float> JacobiKokkos(const std::vector<float>& a,const std::vector<fl
             x_old(i) = 0.0f;
         });
 
+    Kokkos::fence();
+
     float error = 0.0f;
 
     for (int iter = 0; iter < ITERATIONS; ++iter) {
+
+        error = 0.0f;
 
         Kokkos::parallel_reduce(
             Kokkos::RangePolicy<ExecSpace>(0, n),
@@ -43,17 +46,16 @@ std::vector<float> JacobiKokkos(const std::vector<float>& a,const std::vector<fl
 
                 float sigma = 0.0f;
 
-                for (int j = 0; j < n; ++j) {
-                    if (j != i)
-                        sigma += d_a(i, j) * x_old(j);
-                }
+                for (int j = 0; j < n; ++j)
+                    sigma += d_a(i, j) * x_old(j);
+
+                sigma -= d_a(i, i) * x_old(i);
 
                 float new_val = (d_b(i) - sigma) * inv_diag(i);
                 x_new(i) = new_val;
 
                 float diff = fabsf(new_val - x_old(i));
-                if (diff > local_max)
-                    local_max = diff;
+                local_max = diff > local_max ? diff : local_max;
             },
             Kokkos::Max<float>(error)
         );
