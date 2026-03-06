@@ -534,7 +534,7 @@ std::vector<float> JacobiKokkos(
 |-----|----|------|----|
 |3822B1FI1|chistov_alexey|0.1641|1|
 |**REF**|**REF**|**0.2633**|**-**|
-|3822B1FI1|beskhmelnova_kseniya|TOO SLOW|-|
+|3822B1FI1|beskhmelnova_kseniya|0.3483|2|
 
 ## 6_block_gemm_oneapi (3072 elements)
 |Group|Name|Result|Rank|
@@ -546,6 +546,7 @@ std::vector<float> JacobiKokkos(
 ## 7_mkl_gemm_oneapi (3072 elements)
 |Group|Name|Result|Rank|
 |-----|----|------|----|
+|3822B1FI1|beskhmelnova_kseniya|0.4091|2|
 |3822B1FI1|chistov_alexey|0.4392|1|
 |**REF**|**REF**|**0.4392**|**-**|
 
@@ -554,19 +555,21 @@ std::vector<float> JacobiKokkos(
 |-----|----|------|----|
 |3822B1FI1|chistov_alexey|0.0009|1|
 |**REF**|**REF**|**0.3629**|**-**|
+|3822B1FI1|beskhmelnova_kseniya|RUN FAILED|-|
 
 ## 9_jacobi_kokkos (4096 elements)
 |Group|Name|Result|Rank|
 |-----|----|------|----|
 |**REF**|**REF**|**0.2679**|**-**|
+|3822B1FI1|beskhmelnova_kseniya|0.3214|1|
 |3822B1FI1|chistov_alexey|TEST FAILED|-|
 
 # Tasks Done
 ## 3822B1FI1
 |Group|Name|Passed|Score|
 |-----|----|------|-----|
-|3822B1FI1|beskhmelnova_kseniya|5/9|307|
-|3822B1FI1|chistov_alexey|8/9|501|
+|3822B1FI1|beskhmelnova_kseniya|8/9|496|
+|3822B1FI1|chistov_alexey|8/9|500|
 |3822B1FI1|drozhdinov_dmitriy|3/9|170|
 |3822B1FI1|kabalova_valeria|2/9|117|
 |3822B1FI1|rezantseva_anastasia|2/9|114|
