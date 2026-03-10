@@ -10,8 +10,6 @@ std::vector<float> JacobiKokkos(
     size_t total_size = a.size();
     size_t n = static_cast<size_t>(std::sqrt(total_size));
 
-    Kokkos::initialize();
-
     Kokkos::View<float**, Kokkos::LayoutLeft, Kokkos::DefaultExecutionSpace::memory_space> A("A", n, n);
     Kokkos::View<float*, Kokkos::DefaultExecutionSpace::memory_space> B("B", n);
     Kokkos::View<float*, Kokkos::DefaultExecutionSpace::memory_space> X("X", n);
@@ -74,3 +72,4 @@ std::vector<float> JacobiKokkos(
 
     return result;
 }
+
