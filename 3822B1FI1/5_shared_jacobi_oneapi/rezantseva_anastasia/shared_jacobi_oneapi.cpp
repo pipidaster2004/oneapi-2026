@@ -16,6 +16,8 @@ std::vector<float> JacobiSharedONEAPI(
     if (a.size() != n * n) return {};
     if (accuracy < 0.0f) accuracy = 0.0f;
 
+    const float accuracy_sq = accuracy * accuracy;
+
     sycl::queue q(device, sycl::property::queue::in_order{});
 
     float* A   = sycl::malloc_shared<float>(a.size(), q);
@@ -23,15 +25,16 @@ std::vector<float> JacobiSharedONEAPI(
     float* Inv = sycl::malloc_shared<float>(n, q);
     float* X0  = sycl::malloc_shared<float>(n, q);
     float* X1  = sycl::malloc_shared<float>(n, q);
-    float* max_diff = sycl::malloc_shared<float>(1, q);
 
-    if (!A || !B || !Inv || !X0 || !X1 || !max_diff) {
+    float* norm = sycl::malloc_shared<float>(1, q);
+
+    if (!A || !B || !Inv || !X0 || !X1 || !norm) {
         if (A) sycl::free(A, q);
         if (B) sycl::free(B, q);
         if (Inv) sycl::free(Inv, q);
         if (X0) sycl::free(X0, q);
         if (X1) sycl::free(X1, q);
-        if (max_diff) sycl::free(max_diff, q);
+        if (norm) sycl::free(norm, q);
         return {};
     }
 
@@ -41,9 +44,8 @@ std::vector<float> JacobiSharedONEAPI(
     for (size_t i = 0; i < n; ++i) {
         const float aii = A[i * n + i];
         Inv[i] = (aii != 0.0f) ? (1.0f / aii) : 0.0f;
+        X0[i] = 0.0f;
     }
-
-    for (size_t i = 0; i < n; ++i) X0[i] = 0.0f;
 
     q.wait_and_throw();
 
@@ -55,17 +57,19 @@ std::vector<float> JacobiSharedONEAPI(
     float* x_old = X0;
     float* x_new = X1;
 
+    float norm_host = 0.0f;
+
     for (int iter = 0; iter < ITERATIONS; ++iter) {
 
-        q.fill(max_diff, 0.0f, 1);
+        q.fill(norm, 0.0f, 1);
 
         sycl::event e = q.submit([&](sycl::handler& h) {
-            auto md_red = sycl::reduction(max_diff, sycl::maximum<float>());
+            auto red = sycl::reduction(norm, sycl::plus<float>());
 
             h.parallel_for(
                 sycl::nd_range<1>(sycl::range<1>(global), sycl::range<1>(JACOBI_LOCAL)),
-                md_red,
-                [=](sycl::nd_item<1> it, auto& md) {
+                red,
+                [=](sycl::nd_item<1> it, auto& sum) {
                     const size_t i = it.get_global_id(0);
                     if (i >= n) return;
 
@@ -82,14 +86,17 @@ std::vector<float> JacobiSharedONEAPI(
                     const float xi = (B[i] - sum_excl) * inv;
                     x_new[i] = xi;
 
-                    md.combine(sycl::fabs(xi - x_old[i]));
+                    const float d = xi - x_old[i];
+                    sum += d * d;
                 }
             );
         });
 
         e.wait_and_throw();
 
-        if (*max_diff < accuracy) break;
+        norm_host = *norm;
+        if (norm_host < accuracy_sq) break;
+
         std::swap(x_old, x_new);
     }
 
@@ -101,7 +108,7 @@ std::vector<float> JacobiSharedONEAPI(
     sycl::free(Inv, q);
     sycl::free(X0, q);
     sycl::free(X1, q);
-    sycl::free(max_diff, q);
+    sycl::free(norm, q);
 
     return result;
 }

@@ -16,6 +16,8 @@ std::vector<float> JacobiDevONEAPI(
     if (a.size() != n * n) return {};
     if (accuracy < 0.0f) accuracy = 0.0f;
 
+    const float accuracy_sq = accuracy * accuracy;
+
     sycl::queue q(device, sycl::property::queue::in_order{});
 
     std::vector<float> inv_diag(n);
@@ -24,28 +26,27 @@ std::vector<float> JacobiDevONEAPI(
         inv_diag[i] = (aii != 0.0f) ? (1.0f / aii) : 0.0f;
     }
 
-    float* A    = sycl::malloc_device<float>(a.size(), q);
-    float* B    = sycl::malloc_device<float>(b.size(), q);
-    float* Inv  = sycl::malloc_device<float>(n, q);
-    float* X0   = sycl::malloc_device<float>(n, q);
-    float* X1   = sycl::malloc_device<float>(n, q);
+    float* A   = sycl::malloc_device<float>(a.size(), q);
+    float* B   = sycl::malloc_device<float>(b.size(), q);
+    float* Inv = sycl::malloc_device<float>(n, q);
+    float* X0  = sycl::malloc_device<float>(n, q);
+    float* X1  = sycl::malloc_device<float>(n, q);
 
-    float* max_diff = sycl::malloc_shared<float>(1, q);
+    float* norm_dev = sycl::malloc_device<float>(1, q);
 
-    if (!A || !B || !Inv || !X0 || !X1 || !max_diff) {
+    if (!A || !B || !Inv || !X0 || !X1 || !norm_dev) {
         if (A) sycl::free(A, q);
         if (B) sycl::free(B, q);
         if (Inv) sycl::free(Inv, q);
         if (X0) sycl::free(X0, q);
         if (X1) sycl::free(X1, q);
-        if (max_diff) sycl::free(max_diff, q);
+        if (norm_dev) sycl::free(norm_dev, q);
         return {};
     }
 
     q.memcpy(A, a.data(), sizeof(float) * a.size());
     q.memcpy(B, b.data(), sizeof(float) * b.size());
     q.memcpy(Inv, inv_diag.data(), sizeof(float) * n);
-
     q.fill(X0, 0.0f, n);
     q.wait_and_throw();
 
@@ -57,21 +58,22 @@ std::vector<float> JacobiDevONEAPI(
     float* x_old = X0;
     float* x_new = X1;
 
+    float norm_host = 0.0f;
+
     for (int iter = 0; iter < ITERATIONS; ++iter) {
-        *max_diff = 0.0f;
+        q.fill(norm_dev, 0.0f, 1);
 
         q.submit([&](sycl::handler& h) {
-            auto md_red = sycl::reduction(max_diff, sycl::maximum<float>());
+            auto red = sycl::reduction(norm_dev, sycl::plus<float>());
 
             h.parallel_for(
                 sycl::nd_range<1>(sycl::range<1>(global), sycl::range<1>(JACOBI_LOCAL)),
-                md_red,
-                [=](sycl::nd_item<1> it, auto& md) {
+                red,
+                [=](sycl::nd_item<1> it, auto& sum) {
                     const size_t i = it.get_global_id(0);
                     if (i >= n) return;
 
                     const size_t row = i * n;
-
                     const float aii = A[row + i];
                     const float inv = Inv[i];
 
@@ -85,14 +87,15 @@ std::vector<float> JacobiDevONEAPI(
                     const float xi = (B[i] - sum_excl) * inv;
                     x_new[i] = xi;
 
-                    md.combine(sycl::fabs(xi - x_old[i]));
+                    const float d = xi - x_old[i];
+                    sum += d * d;
                 }
             );
         });
 
-        q.wait_and_throw();
+        q.memcpy(&norm_host, norm_dev, sizeof(float)).wait();
 
-        if (*max_diff < accuracy) break;
+        if (norm_host < accuracy_sq) break;
         std::swap(x_old, x_new);
     }
 
@@ -104,7 +107,7 @@ std::vector<float> JacobiDevONEAPI(
     sycl::free(Inv, q);
     sycl::free(X0, q);
     sycl::free(X1, q);
-    sycl::free(max_diff, q);
+    sycl::free(norm_dev, q);
 
     return result;
 }
