@@ -1,0 +1,5 @@
+/usr/bin/ld: /tmp/icpx-8dafc7ea2d/main-ea5e97.o: in function `Run(int, sycl::_V1::device)':
+main.cpp:(.text+0x1b2): undefined reference to `GemmMklONEAPI(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&, unsigned long, sycl::_V1::device)'
+/usr/bin/ld: /tmp/icpx-8dafc7ea2d/main-ea5e97.o: in function `main':
+main.cpp:(.text+0xb17): undefined reference to `GemmMklONEAPI(std::vector<float, std::allocator<float> > const&, std::vector<float, std::allocator<float> > const&, unsigned long, sycl::_V1::device)'
+icpx: error: linker command failed with exit code 1 (use -v to see invocation)
