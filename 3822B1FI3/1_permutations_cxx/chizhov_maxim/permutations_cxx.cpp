@@ -1,28 +1,37 @@
 #include "permutations_cxx.h"
 #include <algorithm>
-#include <string>
+#include <unordered_map>
 
 void Permutations(dictionary_t& dictionary) {
-    for (auto& outer : dictionary) {
-        outer.second.clear();
+    std::unordered_map<std::string, std::string> sorted_cache;
 
-        std::string sorted_outer = outer.first;
-        std::sort(sorted_outer.begin(), sorted_outer.end());
+    for (const auto& pair : dictionary) {
+        std::string sorted = pair.first;
+        std::sort(sorted.begin(), sorted.end());
+        sorted_cache[pair.first] = sorted;
+    }
 
-        for (auto& inner : dictionary) {
-            if (outer.first == inner.first) {
-                continue;
-            }
+    std::unordered_map<std::string, std::vector<std::string>> groups;
 
-            std::string sorted_inner = inner.first;
-            std::sort(sorted_inner.begin(), sorted_inner.end());
+    for (const auto& pair : dictionary) {
+        const std::string& word = pair.first;
+        groups[sorted_cache[word]].push_back(word);
+    }
 
-            if (sorted_outer == sorted_inner) {
-                outer.second.push_back(inner.first);
+    for (auto& pair : dictionary) {
+        const std::string& word = pair.first;
+        std::vector<std::string>& result = pair.second;
+
+        result.clear();
+
+        const std::vector<std::string>& group = groups[sorted_cache[word]];
+
+        for (size_t i = 0; i < group.size(); i++) {
+            if (group[i] != word) {
+                result.push_back(group[i]);
             }
         }
 
-        std::sort(outer.second.begin(), outer.second.end(),
-            std::greater<std::string>());
+        std::sort(result.begin(), result.end(), std::greater<std::string>());
     }
 }
