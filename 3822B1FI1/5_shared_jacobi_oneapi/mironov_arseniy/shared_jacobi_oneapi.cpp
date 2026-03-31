@@ -73,14 +73,3 @@ std::vector<float> JacobiSharedONEAPI(const std::vector<float> &a,
 
   return res;
 }
-
-#include <iostream>
-int main() {
-  std::vector<float> a = {3, -2, 1, 1, 3, 2, -1, 2, 4};
-  std::vector<float> b = {-2, 2, 1};
-  std::vector<float> res = JacobiSharedONEAPI(a, b, 0.001, sycl::device());
-  for (auto el : res) {
-    std::cout << el << " ";
-  }
-  return 0;
-}

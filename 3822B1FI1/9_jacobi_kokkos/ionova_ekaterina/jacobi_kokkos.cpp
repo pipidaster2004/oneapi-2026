@@ -1,8 +1,8 @@
 #include "jacobi_kokkos.h"
 
 std::vector<float> JacobiKokkos(
-        const std::vector<float> a,
-        const std::vector<float> b,
+        const std::vector<float>& a,
+        const std::vector<float>& b,
         float accuracy) {
 
     const size_t dim = b.size();

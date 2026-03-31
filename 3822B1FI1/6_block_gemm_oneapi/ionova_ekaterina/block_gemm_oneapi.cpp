@@ -1,7 +1,7 @@
 #include "block_gemm_oneapi.h"
 
 std::vector<float> GemmBlockONEAPI(
-        const std::vector<float> a, const std::vector<float> b,
+        const std::vector<float>& a, const std::vector<float>& b,
         size_t size, sycl::device device) {
     
     std::vector<float> c(size * size, 0.0f);

@@ -1,0 +1,26 @@
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:32:7: error: use of undeclared identifier 'a_ij'; did you mean 'a_ii'?
+   32 |                         a_ij * x_j для j != i
+      |                         ^~~~
+      |                         a_ii
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:31:27: note: 'a_ii' declared here
+   31 |                     float a_ii = 0.0f;
+      |                           ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:32:17: error: expected ';' after expression
+   32 |                         a_ij * x_j для j != i
+      |                                   ^
+      |                                   ;
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:32:14: error: use of undeclared identifier 'x_j'
+   32 |                         a_ij * x_j для j != i
+      |                                ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:32:18: error: unknown type name 'для'
+   32 |                         a_ij * x_j для j != i
+      |                                    ^
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:32:27: error: invalid '!=' at end of declaration; did you mean '='?
+   32 |                         a_ij * x_j для j != i
+      |                                          ^~
+      |                                          =
+/home/crazyproger/sandbox/oneapi-2026/3822B1FI3/3_acc_jacobi_oneapi/ekaterina_kozlova/acc_jacobi_oneapi.cpp:32:31: error: expected ';' at end of declaration
+   32 |                         a_ij * x_j для j != i
+      |                                              ^
+      |                                              ;
+6 errors generated.

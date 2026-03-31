@@ -1,3 +1,0 @@
-/usr/bin/ld: /tmp/icpx-838353f0b6/main-2dc07b.o: in function `main':
-main.cpp:(.text+0x630): multiple definition of `main'; /tmp/icpx-838353f0b6/shared_jacobi_oneapi-746c10.o:shared_jacobi_oneapi.cpp:(.text+0xaa0): first defined here
-icpx: error: linker command failed with exit code 1 (use -v to see invocation)

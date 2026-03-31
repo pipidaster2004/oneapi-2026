@@ -53,11 +53,11 @@ std::vector<float> JacobiAccONEAPI(const std::vector<float> &a,
         })
         .wait();
 
+    std::swap(prev_res, res);
     if (stop()) {
       break;
     }
 
-    std::swap(prev_res, res);
   }
-  return res;
+  return prev_res;
 }

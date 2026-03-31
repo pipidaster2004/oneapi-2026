@@ -14,8 +14,12 @@ void Permutations(dictionary_t& dictionary) {
         std::string sorted_base = base;
         std::sort(sorted_base.begin(), sorted_base.end());
         for (auto& el: fp[sorted_base]) {
-            if (el != base) 
+            if (el != base)
                 vec.push_back(el);
         }
+    }
+
+    for (auto &[base, vec]: dictionary) {
+        std::sort(vec.rbegin(), vec.rend());
     }
 }

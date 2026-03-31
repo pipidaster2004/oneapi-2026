@@ -1,7 +1,7 @@
 #include "acc_jacobi_oneapi.h"
 
 std::vector<float> JacobiAccONEAPI(
-        const std::vector<float> a, const std::vector<float> b,
+        const std::vector<float>& a, const std::vector<float>& b,
         float accuracy, sycl::device device) {
     
     int n = b.size();

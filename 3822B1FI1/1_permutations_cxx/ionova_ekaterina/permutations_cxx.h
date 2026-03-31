@@ -1,6 +1,7 @@
 #ifndef __PERMUTATIONS_CXX_H
 #define __PERMUTATIONS_CXX_H
 
+#include <algorithm>
 #include <map>
 #include <string>
 #include <vector>
